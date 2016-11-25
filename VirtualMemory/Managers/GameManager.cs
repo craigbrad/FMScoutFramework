@@ -12,8 +12,9 @@ namespace FMScoutFramework.Core.Managers
 	{
 		private bool fmLoaded;
 		private bool fmLoading;
+        public event Action<string> LoadFailed = (s) => { };
 
-		public GameManager ()
+        public GameManager ()
 		{
 			this.fmLoaded = false;
 			this.fmLoading = false;
@@ -152,19 +153,21 @@ namespace FMScoutFramework.Core.Managers
 			FMProcess fmProcess = new FMProcess ();
 			Process[] fmProcesses = Process.GetProcessesByName ("fm");
 
-			if (fmProcesses.Length > 0) {
-				Process activeProcess = fmProcesses [0];
+            if (fmProcesses.Length > 0) {
+                Process activeProcess = fmProcesses [0];
 
-				fmProcess.Pointer = ProcessMemoryAPI.OpenProcess (0x001F0FFF, 1, (uint)activeProcess.Id);
+                fmProcess.Pointer = ProcessMemoryAPI.OpenProcess (0x001F0FFF, 1, (uint)activeProcess.Id);
 				fmProcess.EndPoint = ProcessManager.GetProcessEndPoint (fmProcess.Pointer);
 				fmProcess.Process = activeProcess;
-                fmProcess.BaseAddress = activeProcess.MainModule.BaseAddress.ToInt32();
 
-				ProcessManager.fmProcess = fmProcess;
+                Console.WriteLine("The process's main module's base address is: " + activeProcess.MainModule.BaseAddress);
+                fmProcess.BaseAddress = activeProcess.MainModule.BaseAddress.ToInt32(); //activeProcess.MainModule.BaseAddress.ToInt32();
+
+                ProcessManager.fmProcess = fmProcess;
 				fmProcess.VersionDescription = fmProcess.Process.MainModule.FileVersionInfo.ProductVersion;
 
-				// Search for the current version
-				foreach (var versionType in Assembly.GetCallingAssembly().GetTypes().Where(t => typeof(IIVersion).IsAssignableFrom(t))) {
+                // Search for the current version
+                foreach (var versionType in Assembly.GetCallingAssembly().GetTypes().Where(t => typeof(IIVersion).IsAssignableFrom(t))) {
 					if (versionType.IsInterface)
 						continue;
 					var instance = (IIVersion)Activator.CreateInstance (versionType);
@@ -175,12 +178,13 @@ namespace FMScoutFramework.Core.Managers
 					}
 				}
 
-				fmLoaded = (Version != null);
+                fmLoaded = (Version != null);
 
                 if (!fmLoaded)
                 {
-                    int i;
-                    // Try to find info about the version
+                    LoadFailed(fmProcess.VersionDescription + " - Either this verson of FM is not supported or the save game isn't loaded.");
+                    long i;
+                    // Try to find info about the versio
                     // Lookup the objects in the memory
                     for (i = (fmProcess.BaseAddress + 0x1A8484E); i < fmProcess.EndPoint; i += 4)
                     {
@@ -219,18 +223,22 @@ namespace FMScoutFramework.Core.Managers
                     }
                 }
 			}
+            else
+            {
+                LoadFailed("Failed to find Football Manager process - Please check Football Manager is running.");
+            }
 			return fmLoaded;
 		}
 		#endif
 
-		public static int TryGetPointerObjects(int address, int offset, FMProcess fmProcess) {
+		public static int TryGetPointerObjects(long address, int offset, FMProcess fmProcess) {
 			return GameManager.TryGetPointerObjects (address, offset, fmProcess, "15");
 		}
 
-		public static int TryGetPointerObjects(int address, int offset, FMProcess fmProcess, string masterVersion)
+		public static int TryGetPointerObjects(long address, int offset, FMProcess fmProcess, string masterVersion)
         {
 			#if WINDOWS
-            int memoryAddress = ProcessManager.ReadInt32(address);
+            int memoryAddress = ProcessManager.ReadInt(address);
             Debug.WriteLine("Base 0x{0:X} -> 0x{1:X}", address, memoryAddress);
             if (memoryAddress > fmProcess.BaseAddress && memoryAddress < fmProcess.EndPoint)
             {

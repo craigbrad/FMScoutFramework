@@ -49,7 +49,8 @@ namespace FMScoutFramework.Core.Entities.GameVersions
 			if (numberOfObjects != 7)
 				return false;
 
-			DateTime dt = ProcessManager.ReadDateTime (ProcessManager.fmProcess.BaseAddress + MemoryAddresses.CurrentDateTime);
+			DateTime dt = ProcessManager.ReadDateTime (ProcessManager.fmProcess.
+            + MemoryAddresses.CurrentDateTime);
 			if (dt.Year < 2012 || dt.Year > 2150)
 				return false;
 
@@ -115,7 +116,8 @@ namespace FMScoutFramework.Core.Entities.GameVersions
 		public class VersionPersonEnumPointers : IVersionPersonEnumPointers
 		{
 			public int Player { get { return 0x9E8A074; } }
-			public int Staff { get { return 0x9E850DC; } }
+            public int SecondaryPlayer { get { return 0x0; } }
+            public int Staff { get { return 0x9E850DC; } }
 			public int PlayerStaff { get { return 0x9E8F3DC; } }
 			public int HumanManager { get { return 0x1f12814; } } // Not fixed
 			public int Official { get { return 0x9EA1658; } }

@@ -3,17 +3,25 @@ using FMScoutFramework.Core.Entities.GameVersions;
 
 namespace FMScoutFramework.Core.Offsets
 {
-	public sealed class StaffOffsets
-	{
+    public sealed class HumanOffsets
+    {
 
         public IVersion Version;
 
-		public StaffOffsets(IVersion version) {
-			this.Version = version;
-		}
+        public HumanOffsets(IVersion version)
+        {
+            this.Version = version;
+        }
 
+        public short PersonAddress
+        {
+            get
+            {
+                return 0x0;
+            }
+        }
 
-        public short StaffAttributes
+        public short HumanAttributes
         {
             get
             {
@@ -28,7 +36,7 @@ namespace FMScoutFramework.Core.Offsets
                 else if (Version.GetType() == typeof(Steam_16_3_2_Windows))
                     return 0x4;
                 else
-                    return 0x0;
+                    return 0x4;
             }
         }
 
@@ -48,63 +56,6 @@ namespace FMScoutFramework.Core.Offsets
                     return 0x74;
                 else
                     return 0x0;
-            }
-        }
-
-        public short DateOfBirth
-        {
-            get
-            {
-                return 0xBC;
-            }
-        }
-
-        public short FirstName
-        {
-            get
-            {
-                return 0xC8;
-            }
-        }
-
-        public short LastName
-        {
-            get
-            {
-                return 0xCC;
-            }
-        }
-
-        public short Nationality
-        {
-            get
-            {
-                return 0xD8;
-            }
-        }
-
-        public short Contract
-        {
-            get
-            {
-                return 0x104;
-            }
-        }
-
-        public short ClubID
-        {
-            get
-            {
-                return 0x60;
-            }
-        }
-
-        public short Job
-        {
-            get
-            {
-                //1EE
-                return 0x0;
             }
         }
 
@@ -143,6 +94,69 @@ namespace FMScoutFramework.Core.Offsets
                     return 0x78;
                 else
                     return 0x0;
+            }
+        }
+
+        public short RolesAttributes
+        {
+            get
+            {
+                if (Version.GetType() == typeof(Steam_16_3_2_Windows))
+                {
+                    return 0x310;
+                }
+                else
+                {
+                    return 0x0;
+                }
+            }
+        }
+        
+        public short DateOfBirth
+        {
+            get
+            {
+                return 0x294;
+            }
+        }
+
+        public short FirstName
+        {
+            get
+            {
+                return 0x2A0;
+            }
+        }
+
+        public short LastName
+        {
+            get
+            {
+                return 0x2A4;
+            }
+        }
+
+        public short Nationality
+        {
+            get
+            {
+                return 0x2B0;
+            }
+        }
+
+        public short Contract
+        {
+            get
+            {
+                return 0x2DC;
+            }
+        }
+
+        public short ClubID
+        {
+            get
+            {
+                return 0x60;
             }
         }
 
@@ -197,7 +211,7 @@ namespace FMScoutFramework.Core.Offsets
                     Version.GetType() == typeof(Steam_15_3_2_Windows))
                     return 0x88;
                 else if (Version.GetType() == typeof(Steam_16_3_2_Windows))
-                    return 0x94;
+                    return 0x26C;
                 else
                     return 0x0;
             }
@@ -216,41 +230,11 @@ namespace FMScoutFramework.Core.Offsets
                     Version.GetType() == typeof(Steam_15_3_2_Windows))
                     return 0x8C;
                 else if (Version.GetType() == typeof(Steam_16_3_2_Windows))
-                    return 0x98;
+                    return 0x270;
                 else
                     return 0x0;
             }
         }
-
-		public short PersonAddress {
-			get {
-				if (Version.GetType () == typeof(Steam_14_3_0_Linux) ||
-				    Version.GetType () == typeof(Steam_14_3_0_Mac) ||
-				    Version.GetType () == typeof(Steam_14_3_1_Linux))
-					return 0x90;
-				else if (Version.GetType () == typeof(Steam_15_2_1_Windows) ||
-				         Version.GetType () == typeof(Steam_15_3_2_Mac) ||
-				         Version.GetType () == typeof(Steam_15_3_2_Windows)) {
-					return 0x98;
-				}
-				else {
-					return 0x0;
-				}
-			}
-		}
-
-		public short JobAttributes {
-			get {
-				if (Version.GetType() == typeof(Steam_14_3_0_Linux) ||
-					Version.GetType() == typeof(Steam_14_3_0_Mac) ||
-					Version.GetType() == typeof(Steam_14_3_1_Linux))
-					return 0x144;
-                else if (Version.GetType() == typeof(Steam_15_2_1_Windows))
-                    return 0x14C;
-				else
-					return 0x0;
-			}
-		}
-	}
+    }
 }
 

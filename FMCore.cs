@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using FMScoutFramework.Core.Managers;
@@ -15,9 +14,16 @@ namespace FMScoutFramework.Core
 
 		public DatabaseModeEnum DatabaseMode { get; private set; }
 
-		public event Action GameLoaded = () => {};
+		public event Action GameLoaded = () => { };
+        public event Action Increment = () => { };
+        public event Action<int> ResetProgressBar = (x) => { };
+        public event Action<string> SetTextLoading = (s) => { };
+        public event Action<string> LoadFailed = (s) => { };
 
-		public FMCore(DatabaseModeEnum databaseMode)
+        public bool loading = false;
+
+
+        public FMCore(DatabaseModeEnum databaseMode)
 		{
 			DatabaseMode = databaseMode;
 		}
@@ -35,6 +41,8 @@ namespace FMScoutFramework.Core
 		public IEnumerable<Player> Players { get { return GetListFromStore<Player> (); } }
 		public IEnumerable<Staff> Staff { get { return GetListFromStore<Staff> (); } }
 		public IEnumerable<PlayerStaff> PlayerStaff { get { return GetListFromStore<PlayerStaff> (); } }
+        public IEnumerable<Human> Humans { get { return GetListFromStore<Human> (); } }
+
 
 		private IQueryable<T> GetListFromStore<T>()
 		{
@@ -49,26 +57,31 @@ namespace FMScoutFramework.Core
 
 		public void LoadData(bool refreshPersonCache)
 		{
-			CheckProcessAndGame ();
-			LoadDataForCheckedGame (refreshPersonCache);
+            if (CheckProcessAndGame())
+            {
+                LoadDataForCheckedGame(refreshPersonCache);
+            }
 		}
 
 		public bool CheckProcessAndGame()
 		{
 			if (gameManager == null) {
 				gameManager = new GameManager ();
-				gameManager.FMLoading = true;
-				gameManager.findFMProcess ();
-				gameManager.FMLoading = false;
-			}
+                gameManager.LoadFailed += LoadFailed;
+            }
 
-			return gameManager.FMLoaded;
+
+            gameManager.FMLoading = true;
+            gameManager.findFMProcess();
+            gameManager.FMLoading = false;
+
+            return gameManager.FMLoaded;
 		}
 
 		public void LoadDataForCheckedGame(bool refreshPersonCache)
 		{
 			if (objectManager == null)
-				objectManager = new ObjectManager (gameManager, DatabaseMode);
+				objectManager = new ObjectManager (gameManager, DatabaseMode, Increment, SetTextLoading, ResetProgressBar);
 
 			objectManager.Load (refreshPersonCache);
 			GameLoaded ();

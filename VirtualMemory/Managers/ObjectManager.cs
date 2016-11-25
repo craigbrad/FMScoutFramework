@@ -11,7 +11,7 @@ using FMScoutFramework.Core.Entities.InGame;
 
 namespace FMScoutFramework.Core.Managers
 {
-	public static class ObjectManagerWrapper
+    public static class ObjectManagerWrapper
 	{
 		public static Dictionary<DatabaseModeEnum, ObjectManager> ObjectManagers =
 			new Dictionary<DatabaseModeEnum, ObjectManager>();
@@ -21,15 +21,25 @@ namespace FMScoutFramework.Core.Managers
 
 	public class ObjectManager
 	{
-		public Dictionary<Type, object>ObjectStore = new Dictionary<Type, object>();
+		public Dictionary<Type, object> ObjectStore = new Dictionary<Type, object>();
 		private const int BufferSizeStaff = 16*1024*1024;
 		public readonly DatabaseModeEnum DatabaseMode;
 		public readonly GameManager GameManager;
 
-		public ObjectManager (GameManager gameManager, DatabaseModeEnum databaseMode)
+        public event Action Increment = () => { };
+        public event Action<int> ResetProgressBar = (x) => { };
+        public event Action<string> SetTextLoading = (s) => { };
+        public event Action<string> LoadFailed = (s) => { };
+        public List<int> unknownAddresses = new List<int>();
+
+
+        public ObjectManager (GameManager gameManager, DatabaseModeEnum databaseMode, Action increment, Action<string> setTextLoading, Action<int> resetProgressBar)
 		{
 			DatabaseMode = databaseMode;
 			GameManager = gameManager;
+            Increment = increment;
+            SetTextLoading = setTextLoading;
+            ResetProgressBar = resetProgressBar;
 
 			if (!ObjectManagerWrapper.ObjectManagers.ContainsKey (databaseMode)) {
 				ObjectManagerWrapper.ObjectManagers.Add (databaseMode, null);
@@ -44,21 +54,31 @@ namespace FMScoutFramework.Core.Managers
 			if (ObjectManagerWrapper.StaffMemoryCache == null && !refreshPersonCache) {
 				ObjectManagerWrapper.StaffMemoryCache = GetPersonMemoryAddresses (BufferSizeStaff);
 			}
+
 			var staffAddresses = ObjectManagerWrapper.StaffMemoryCache;
 
+            SetTextLoading("Loading Continents");
 			ObjectStore.Add (typeof(Continent), RetrieveObjects<Continent> (m => m.Continent, m => m.Continent));
-			ObjectStore.Add (typeof(Nation), RetrieveObjects<Nation> (m => m.Nation, m => m.Nation));
-			ObjectStore.Add (typeof(City), RetrieveObjects<City> (m => m.City, m => m.City));
-			ObjectStore.Add (typeof(Club), RetrieveObjects<Club> (m => m.Club, m => m.Club));
+            SetTextLoading("Loading Nations");
+            ObjectStore.Add (typeof(Nation), RetrieveObjects<Nation> (m => m.Nation, m => m.Nation));
+            SetTextLoading("Loading Cities");
+            ObjectStore.Add (typeof(City), RetrieveObjects<City> (m => m.City, m => m.City));
+            SetTextLoading("Loading Clubs");
+            ObjectStore.Add (typeof(Club), RetrieveObjects<Club> (m => m.Club, m => m.Club));
 
-			#region People
-			ObjectStore.Add (typeof(Player), RetrieveObjects<Player> (staffAddresses.PlayerAddresses));
-			ObjectStore.Add (typeof(Staff), RetrieveObjects<Staff> (staffAddresses.StaffAddresses));
-			ObjectStore.Add (typeof(PlayerStaff), RetrieveObjects<PlayerStaff>(staffAddresses.PlayerStaffAddresses));
-			#endregion
-		}
+            #region People
+            SetTextLoading("Loading Players");
+            ObjectStore.Add (typeof(Player), RetrieveObjects<Player> (staffAddresses.PlayerAddresses));
+            SetTextLoading("Loading Staff");
+            ObjectStore.Add (typeof(Staff), RetrieveObjects<Staff> (staffAddresses.StaffAddresses));
+            SetTextLoading("Loading Player Staff");
+            ObjectStore.Add (typeof(PlayerStaff), RetrieveObjects<PlayerStaff>(staffAddresses.PlayerStaffAddresses));
+            SetTextLoading("Loading Human Managers");
+            ObjectStore.Add(typeof(Human), RetrieveObjects<Human>(staffAddresses.HumanManagersAddresses));
+            #endregion
+        }
 
-		private StaffMemoryAddressesWrapper GetPersonMemoryAddresses(int maxBufferSize)
+        private StaffMemoryAddressesWrapper GetPersonMemoryAddresses(int maxBufferSize)
 		{
 			object memAddrSyncroot = new object();
 
@@ -73,7 +93,6 @@ namespace FMScoutFramework.Core.Managers
 			List<int> addresses = GetMemoryAddresses(m=>m.Person, m=>m.Person);
 
 			List<List<int>> memoryAddressBatches = SplitMemoryAddressesIntoBuffer(addresses);
-			List<int> unknownAddresses = new List<int> ();
 
 			foreach (var memoryBatch in memoryAddressBatches)
 			{
@@ -87,31 +106,50 @@ namespace FMScoutFramework.Core.Managers
 				byte[] buffer = ProcessManager.ReadProcessMemory(memoryBatch.Min(), Convert.ToInt32(memoryBatch.Max() + 2000 - memoryBatch.Min()));
 				#endif
 				int lowestPointerInBatch = memoryBatch.Min();
-				foreach (int memoryAddress in memoryBatch)
+
+                foreach (int memoryAddress in memoryBatch)
 				{
 					//first 4 bytes contain the type
 					int type = ProcessManager.ReadInt32(buffer, memoryAddress + 0x0 - lowestPointerInBatch);
 					lock (memAddrSyncroot)
 					{
-						if (type == GameManager.Version.PersonEnum.Player) {
-							memoryAddresses.PlayerAddresses.Add (memoryAddress);
-						} else if (type == GameManager.Version.PersonEnum.Staff) {
-							memoryAddresses.StaffAddresses.Add (memoryAddress);
-						} else if (type == GameManager.Version.PersonEnum.HumanManager) {
-							memoryAddresses.HumanManagersAddresses.Add (memoryAddress);
-						} else if (type == GameManager.Version.PersonEnum.PlayerStaff) {
-							memoryAddresses.PlayerStaffAddresses.Add (memoryAddress);
-						} else {
-							// Dump it
-							if (unknownAddresses.IndexOf (type) < 0 && type > 0x0) {
-								int personID = ProcessManager.ReadInt32 (buffer, memoryAddress + 0x8 - lowestPointerInBatch);
-								Debug.WriteLine ("Found Unknown Person Type: {0:X} @ 0x{1:X} with ID: {2}", type, memoryAddress, personID);
-								unknownAddresses.Add (type);
-							}
-						}
-					}
+                        if (type == GameManager.Version.PersonEnum.Player)
+                        {
+                            memoryAddresses.PlayerAddresses.Add(memoryAddress);
+
+                        }
+                        else if (type == GameManager.Version.PersonEnum.SecondaryPlayer)
+                        {
+                            memoryAddresses.PlayerAddresses.Add(memoryAddress);
+                        }
+                        else if (type == GameManager.Version.PersonEnum.Staff)
+                        {
+                            memoryAddresses.StaffAddresses.Add(memoryAddress);
+                        }
+                        else if (type == GameManager.Version.PersonEnum.HumanManager)
+                        {
+                            memoryAddresses.HumanManagersAddresses.Add(memoryAddress);
+                        }
+                        else if (type == GameManager.Version.PersonEnum.PlayerStaff)
+                        {
+                            memoryAddresses.PlayerStaffAddresses.Add(memoryAddress);
+                        }
+                        else {
+                            // Dump it
+    
+                            if (unknownAddresses.IndexOf(type) < 0 && type > 0x0)
+                            {
+                                int personID = ProcessManager.ReadInt32(buffer, memoryAddress + 0x8 - lowestPointerInBatch);
+                                Debug.WriteLine("Found Unknown Person Type: {0:X} @ 0x{1:X} with ID: {2}", type, memoryAddress, personID);
+                                unknownAddresses.Add(type);
+                            }
+                            unknownAddresses.Add(type);
+                        }
+                    }
 				}
-			}
+
+
+            }
 
 			return memoryAddresses;
 		}
@@ -167,15 +205,16 @@ namespace FMScoutFramework.Core.Managers
 		private Dictionary<int, T> RetrieveObjects<T>(List<Int32> memoryAddresses)
 			where T : BaseObject
 		{
-			return RetrieveObjects<T> (m => m.CurrentDateTime, m => m.CurrentDateTime, memoryAddresses);
+            return RetrieveObjects<T> (m => m.CurrentDateTime, m => m.CurrentDateTime, memoryAddresses);
 		}
 
 		private Dictionary<int, T> RetrieveObjects<T>(Expression<Func<IVersionMemoryAddresses, int>> baseObjectPointer, Func<IVersionMemoryAddresses, int> compiledObjectPointer, List<Int32> memoryAddresses) where T: BaseObject
 		{
-			/*
+            /*
 			if (DatabaseMode == DatabaseModeEnum.Cached)
 				return RetrieveObjectsCached */
-			return RetrieveObjectRealtime<T> (baseObjectPointer, compiledObjectPointer, memoryAddresses);
+
+            return RetrieveObjectRealtime<T> (baseObjectPointer, compiledObjectPointer, memoryAddresses);
 		}
 
 		private Dictionary<int, T> RetrieveObjectRealtime<T>(Expression<Func<IVersionMemoryAddresses, int>> baseObjectPointer, Func<IVersionMemoryAddresses, int> compiledObjectPointer, List<Int32> memoryAddresses) where T : BaseObject
@@ -191,7 +230,9 @@ namespace FMScoutFramework.Core.Managers
 			Expression createNew = Expression.New(constructor, expPointer, vPointer);
 			LambdaExpression lambda = Expression.Lambda(createNew, new[] { expPointer, vPointer });
 			Func<int, IVersion, T> constructInvoker = (Func<int, IVersion, T>)lambda.Compile();
-			#endregion
+            #endregion
+
+            ResetProgressBar(memoryAddresses.Count());
 
 			var outputList = new Dictionary<int, T> (memoryAddresses.Count);
 			foreach (int address in memoryAddresses) {
@@ -200,6 +241,7 @@ namespace FMScoutFramework.Core.Managers
 					outputList.Add (address, obj);
 				} catch {
 				}
+                Increment();
 			}
 
 			return outputList;

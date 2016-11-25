@@ -33,6 +33,12 @@ namespace FMScoutFramework.Core.Entities.InGame
 			}
 		}
 
+        public Int32 SeasonTicketSales {
+            get {
+                return PropertyInvoker.Get<Int32>(ClubOffsets.SeasonTicketHolders, OriginalBytes, MemoryAddress, DatabaseMode);
+            }
+        }
+
 		public Team[] Teams {
 			get {
 				int teamCount = ProcessManager.ReadArrayLength (MemoryAddress + ClubOffsets.Teams);

@@ -43,7 +43,7 @@ namespace FMScoutFramework.Core.Offsets
                     return 0xB0;
                 }
 
-                return 0x0;
+                return 0x104;
             }
         }
 

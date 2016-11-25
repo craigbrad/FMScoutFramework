@@ -7,13 +7,13 @@ using FMScoutFramework.Core.Managers;
 namespace FMScoutFramework.Core.Entities.GameVersions
 {
 
-    internal class Steam_16_3_2_Windows : IIVersion
+    internal class Steam_17_1_1_Windows : IIVersion
     {
         public IVersionMemoryAddresses MemoryAddresses { get; private set; }
         public IVersionPersonEnumPointers PersonEnum { get; private set; }
         public IPersonVersionOffsets PersonOffsets { get; private set; }
 
-        public Steam_16_3_2_Windows()
+        public Steam_17_1_1_Windows()
         {
             MemoryAddresses = new VersionMemoryAddresses();
             PersonEnum = new VersionPersonEnumPointers();
@@ -22,12 +22,12 @@ namespace FMScoutFramework.Core.Entities.GameVersions
 
         public string Description
         {
-            get { return "16.3.2 Steam"; }
+            get { return "17.1.1 Steam"; }
         }
 
         public string MainVersionNumber
         {
-            get { return "16"; }
+            get { return "17"; }
         }
 
         public bool SupportsProcess(FMProcess process, byte[] context)
@@ -37,7 +37,8 @@ namespace FMScoutFramework.Core.Entities.GameVersions
 #endif
 
 #if WINDOWS
-            if (process.VersionDescription != "16.3.2f830543") return false;
+            Console.WriteLine(process.VersionDescription);
+            if (process.VersionDescription != "17.1.1f899420") return false;
 
             var dt = ProcessManager.ReadDateTime(process.BaseAddress + MemoryAddresses.CurrentDateTime);
             if (dt.Year < 2012 || dt.Year > 2150)

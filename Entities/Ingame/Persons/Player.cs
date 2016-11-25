@@ -22,7 +22,7 @@ namespace FMScoutFramework.Core.Entities.InGame
             this.PlayerOffsets = new PlayerOffsets(version);
         }
 
-		private int PlayerAddress {
+		public int PlayerAddress {
 			get {
 				return (MemoryAddress + Version.PersonOffsets.Player);
 			}
@@ -220,9 +220,6 @@ namespace FMScoutFramework.Core.Entities.InGame
                          Version.GetType() == typeof(Steam_16_3_1_Windows) ||
                          Version.GetType() == typeof(Steam_16_3_2_Windows))
                 {
-                    /*
- */
-
                     encryptedVal = encryptedVal ^ 0x542e;
                     encryptedVal = BitwiseOperations.rol_short(encryptedVal, 2);
                     encryptedVal = encryptedVal ^ 0xdf2c;

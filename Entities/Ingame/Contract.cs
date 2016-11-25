@@ -42,15 +42,21 @@ namespace FMScoutFramework.Core.Entities.InGame
 			get {
 				return PropertyInvoker.Get<DateTime> (ContractOffsets.DateStarted, OriginalBytes, MemoryAddress, DatabaseMode);
 			}
-		}
+            set {
+                PropertyInvoker.Set<DateTime>(ContractOffsets.DateStarted, OriginalBytes, MemoryAddress, DatabaseMode, value);
+            }
+        }
 
 		public DateTime DateExpires {
 			get {
 				return PropertyInvoker.Get<DateTime> (ContractOffsets.DateExpires, OriginalBytes, MemoryAddress, DatabaseMode);
 			}
+            set {
+                PropertyInvoker.Set<DateTime> (ContractOffsets.DateExpires, OriginalBytes, MemoryAddress, DatabaseMode, value);
+            }
 		}
 
-		public SquadStatus SquadStatus {
+        public SquadStatus SquadStatus {
 			get {
 				return (SquadStatus)(PropertyInvoker.Get<sbyte> (ContractOffsets.SquadStatus, OriginalBytes, MemoryAddress, DatabaseMode));
 			}

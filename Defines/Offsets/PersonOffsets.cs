@@ -13,9 +13,9 @@ namespace FMScoutFramework.Core.Offsets
 		}
 
 		public short DateOfBirth
-		{
-			get
-			{
+        {
+            get
+            {
                 if (Version.GetType() == typeof(Steam_14_3_0_Linux) ||
                     Version.GetType() == typeof(Steam_14_3_0_Mac) ||
                     Version.GetType() == typeof(Steam_14_3_1_Linux) ||
@@ -44,12 +44,12 @@ namespace FMScoutFramework.Core.Offsets
                     Version.GetType() == typeof(Steam_15_3_2_Mac) ||
                     Version.GetType() == typeof(Steam_15_3_2_Windows))
                     return 0x10;
+                else if (Version.GetType() == typeof(Steam_15_2_1_Windows))
+                    return 0x164;
                 else if (Version.GetType() == typeof(Steam_16_3_0_Windows) ||
                          Version.GetType() == typeof(Steam_16_3_1_Windows) ||
                          Version.GetType() == typeof(Steam_16_3_2_Windows))
                     return 0x30;
-                else if (Version.GetType() == typeof(Steam_15_2_1_Windows))
-                    return 0x164;
                 else
                     return 0x17C;
 			}

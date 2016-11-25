@@ -3,6 +3,7 @@
 	public interface IVersionPersonEnumPointers
 	{
 		int Player { get; }
+        int SecondaryPlayer { get; }
 		int Staff { get; }
 		int PlayerStaff { get; }
 		int HumanManager { get; }

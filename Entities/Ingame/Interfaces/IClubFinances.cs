@@ -4,8 +4,7 @@
     {
         int Balance { get; set; }
         int HighestWagePaid { get; set; }
-        int LastestSeasonTickets { get; set; }
-        int LatestSeasonTicketsAddress { get; set; }
+        int LatestSeasonTickets { get; set; }
         int RemainingBudget { get; set; }
         int SeasonTransferFunds { get; set; }
         int TransferIncomePercentage { get; set; }

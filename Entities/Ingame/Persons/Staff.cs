@@ -26,23 +26,154 @@ namespace FMScoutFramework.Core.Entities.InGame
 			}
 		}
 
-		private int StaffAddress {
+		public int StaffAddress {
 			get {
 				return MemoryAddress + Version.PersonOffsets.Staff;
 			}
 		}
 
-		public Int32 ID {
-			get {
-				return PropertyInvoker.Get<Int32>(StaffOffsets.ID, OriginalBytes, StaffAddress, DatabaseMode);
-			}
-		}
+        public Int32 ID
+        {
+            get
+            {
+                return PropertyInvoker.Get<Int32>(StaffOffsets.ID, OriginalBytes, StaffAddress, DatabaseMode);
+            }
+        }
 
-		public Int32 RowID {
-			get {
-				return PropertyInvoker.Get<Int32>(StaffOffsets.RowID, OriginalBytes, StaffAddress, DatabaseMode);
-			}
-		}
-	}
+        public Int32 RowID
+        {
+            get
+            {
+                return PropertyInvoker.Get<Int32>(StaffOffsets.RowID, OriginalBytes, StaffAddress, DatabaseMode);
+            }
+        }
+
+
+        public short HomeReputation
+        {
+            get
+            {
+                return PropertyInvoker.Get<short>(StaffOffsets.HomeReputation, OriginalBytes, StaffAddress, DatabaseMode);
+            }
+            set
+            {
+                PropertyInvoker.Set<short>(StaffOffsets.HomeReputation, OriginalBytes, StaffAddress, DatabaseMode, value);
+            }
+        }
+
+        public short CurrentReputation
+        {
+            get
+            {
+                return PropertyInvoker.Get<short>(StaffOffsets.CurrentReputation, OriginalBytes, StaffAddress, DatabaseMode);
+            }
+            set
+            {
+                PropertyInvoker.Set<short>(StaffOffsets.CurrentReputation, OriginalBytes, StaffAddress, DatabaseMode, value);
+            }
+        }
+
+        public short WorldReputation
+        {
+            get
+            {
+                return PropertyInvoker.Get<short>(StaffOffsets.WorldReputation, OriginalBytes, StaffAddress, DatabaseMode);
+            }
+            set
+            {
+                PropertyInvoker.Set<short>(StaffOffsets.WorldReputation, OriginalBytes, StaffAddress, DatabaseMode, value);
+            }
+        }
+
+        public short CurrentAbility
+        {
+            get
+            {
+                return PropertyInvoker.Get<short>(StaffOffsets.CurrentAbility, OriginalBytes, StaffAddress, DatabaseMode);
+            }
+            set
+            {
+                PropertyInvoker.Set<short>(StaffOffsets.CurrentAbility, OriginalBytes, StaffAddress, DatabaseMode, value);
+            }
+        }
+
+        public short PotentialAbility
+        {
+            get
+            {
+                return PropertyInvoker.Get<short>(StaffOffsets.PotentialAbility, OriginalBytes, StaffAddress, DatabaseMode);
+            }
+            set
+            {
+                PropertyInvoker.Set<short>(StaffOffsets.PotentialAbility, OriginalBytes, StaffAddress, DatabaseMode, value);
+            }
+        }
+
+        public new DateTime DateOfBirth
+        {
+            get
+            {
+                return PropertyInvoker.Get<DateTime>(StaffOffsets.DateOfBirth, OriginalBytes, StaffAddress, DatabaseMode);
+            }
+            set
+            {
+                PropertyInvoker.Set<DateTime>(StaffOffsets.DateOfBirth, OriginalBytes, StaffAddress, DatabaseMode, value);
+            }
+        }
+
+        public new string Firstname
+        {
+            get
+            {
+                return PropertyInvoker.GetString(StaffOffsets.FirstName, Version.MemoryAddresses.StringOffset, OriginalBytes, StaffAddress, DatabaseMode);
+            }
+        }
+
+        public new string Lastname
+        {
+            get
+            {
+                return PropertyInvoker.GetString(StaffOffsets.LastName, Version.MemoryAddresses.StringOffset, OriginalBytes, StaffAddress, DatabaseMode);
+            }
+        }
+
+        public new Nation Nationality
+        {
+            get
+            {
+                return PropertyInvoker.GetPointer<Nation>(StaffOffsets.Nationality, OriginalBytes, StaffAddress, DatabaseMode, Version);
+            }
+        }
+
+        public StaffAttributes StaffAttributes
+        {
+            get
+            {
+                int startAddress = StaffAddress + StaffOffsets.StaffAttributes;
+                return new StaffAttributes(startAddress, Version);
+            }
+        }
+
+        public new Contract Contract
+        {
+            get
+            {
+                return PropertyInvoker.GetPointer<Contract>(StaffOffsets.Contract, OriginalBytes, PersonAddress, DatabaseMode, Version);
+            }
+        }
+
+        public Int32 ClubID
+        {
+            get
+            {
+                return PropertyInvoker.Get<Int32>(StaffOffsets.ClubID, OriginalBytes, StaffAddress, DatabaseMode);
+            }
+        }
+
+        public override string ToString()
+        {
+            return Firstname + " " + Lastname;
+        }
+    }
 }
 

@@ -2,10 +2,10 @@
 
 namespace FMScoutFramework.Core.Entities.InGame.Interfaces
 {
-    public interface IStaff
+    public interface IHuman
     {
         int ID { get; }
-        StaffAttributes StaffAttributes { get; }
+        HumanAttributes HumanAttributes { get; }
         short HomeReputation { get; }
         short CurrentReputation { get; }
         short WorldReputation { get; }

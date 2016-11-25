@@ -157,7 +157,13 @@ namespace FMScoutFramework.Core.Managers
 			return ReadInt32 (buffer, 0);
 		}
 
-		public static UInt32 ReadUInt32(int address)
+        public static Int64 ReadInt64(int address)
+        {
+            byte[] buffer = ReadProcessMemory(address, 8);
+            return ReadInt64(buffer, 0);
+        }
+
+        public static UInt32 ReadUInt32(int address)
 		{
 			byte[] buffer = ReadProcessMemory ((int)address, 4);
 			return ReadUInt32 (buffer, 0);
@@ -263,7 +269,12 @@ namespace FMScoutFramework.Core.Managers
 			return BitConverter.ToInt32 (buffer, offset);
 		}
 
-		public static ushort ReadUInt16(byte[] buffer, int offset)
+        public static Int64 ReadInt64(byte[] buffer, int offset)
+        {
+            return BitConverter.ToInt64(buffer, offset);
+        }
+
+        public static ushort ReadUInt16(byte[] buffer, int offset)
 		{
 			return BitConverter.ToUInt16 (buffer, offset);
 		}

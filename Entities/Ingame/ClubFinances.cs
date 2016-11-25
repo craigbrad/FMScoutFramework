@@ -88,7 +88,7 @@ namespace FMScoutFramework.Core.Entities.InGame
                         encryptedBalance = (encryptedBalance ^ 0xFAECECF1);
                         encryptedBalance = BitwiseOperations.ror(encryptedBalance, rotateAmount);
 
-                        PropertyInvoker.Set<int>(ClubFinancesOffsets.Balance, OriginalBytes, MemoryAddress, DatabaseMode, value);
+                        PropertyInvoker.Set<int>(ClubFinancesOffsets.Balance, OriginalBytes, MemoryAddress, DatabaseMode, (int)encryptedBalance);
                     }
                     catch
                     {
@@ -97,6 +97,14 @@ namespace FMScoutFramework.Core.Entities.InGame
                 }
             }
 		}
+
+        public int BalanceAddress
+        {
+            get
+            {
+                return MemoryAddress + ClubFinancesOffsets.Balance;
+            }
+        }
 
 		public int RemainingBudget {
 			get {
@@ -170,23 +178,13 @@ namespace FMScoutFramework.Core.Entities.InGame
             }
         }
 
-		public int LatestSeasonTicketsAddress {
+		public int LatestSeasonTickets {
 			get {
 				return PropertyInvoker.Get<Int32> (ClubFinancesOffsets.LatestSeasonTicketSales, OriginalBytes, MemoryAddress, DatabaseMode);
 			}
             set
             {
                 PropertyInvoker.Set<Int32>(ClubFinancesOffsets.LatestSeasonTicketSales, OriginalBytes, MemoryAddress, DatabaseMode, value);
-            }
-        }
-
-		public int LastestSeasonTickets {
-			get {
-				return PropertyInvoker.Get<Int32> (0x0, OriginalBytes, this.LatestSeasonTicketsAddress, DatabaseMode);
-			}
-            set
-            {
-                PropertyInvoker.Set<Int32>(0x0, OriginalBytes, this.LatestSeasonTicketsAddress, DatabaseMode, value);
             }
         }
 	}

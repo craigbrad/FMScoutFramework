@@ -44,14 +44,108 @@
     <DefineConstants>RELEASE;WINDOWS;</DefineConstants>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>.</OutputPath>
+    <DefineConstants>WINDOWS</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Linux-Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Linux-Debug\</OutputPath>
+    <DefineConstants>DEBUG;LINUX;</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Linux-Release|x86'">
+    <OutputPath>bin\x86\Linux-Release\</OutputPath>
+    <DefineConstants>RELEASE;LINUX;</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Windows-Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Windows-Debug\</OutputPath>
+    <DefineConstants>DEBUG;WINDOWS;</DefineConstants>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Windows-Release|x86'">
+    <OutputPath>bin\x86\Windows-Release\</OutputPath>
+    <DefineConstants>RELEASE;WINDOWS;</DefineConstants>
+    <Optimize>true</Optimize>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>WINDOWS</DefineConstants>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Linux-Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Linux-Debug\</OutputPath>
+    <DefineConstants>DEBUG;LINUX;</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Linux-Release|x64'">
+    <OutputPath>bin\x64\Linux-Release\</OutputPath>
+    <DefineConstants>RELEASE;LINUX;</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Windows-Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Windows-Debug\</OutputPath>
+    <DefineConstants>DEBUG;WINDOWS;</DefineConstants>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Windows-Release|x64'">
+    <OutputPath>bin\x64\Windows-Release\</OutputPath>
+    <DefineConstants>RELEASE;WINDOWS;</DefineConstants>
+    <Optimize>true</Optimize>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>WINDOWS</DefineConstants>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Defines\Offsets\PersonTypes\HumanOffsets.cs" />
+    <Compile Include="Defines\Offsets\PersonTypes\Sub-Entities\HumanAttributesOffsets.cs" />
+    <Compile Include="Defines\Offsets\PersonTypes\Sub-Entities\StaffAttributesOffsets.cs" />
     <Compile Include="Defines\Versions\Steam_16_3_1_Windows.cs" />
     <Compile Include="Defines\Versions\Steam_16_3_0_Windows.cs" />
+    <Compile Include="Defines\Versions\Steam_17_1_1_Windows.cs" />
     <Compile Include="Defines\Versions\Steam_16_3_2_Windows.cs" />
+    <Compile Include="Entities\Ingame\HumanAttributes.cs" />
+    <Compile Include="Entities\Ingame\Interfaces\IHuman.cs" />
+    <Compile Include="Entities\Ingame\Interfaces\IHumanAttributes.cs" />
+    <Compile Include="Entities\Ingame\Interfaces\IStaffAttributes.cs" />
+    <Compile Include="Entities\Ingame\Persons\Human.cs" />
+    <Compile Include="Entities\Ingame\StaffAttributes.cs" />
     <Compile Include="FMCore.cs" />
     <Compile Include="Attributes\MemoryAddressAttribute.cs" />
     <Compile Include="Converters\DateConverter.cs" />

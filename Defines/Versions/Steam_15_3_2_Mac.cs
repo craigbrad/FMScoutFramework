@@ -174,7 +174,8 @@ namespace FMScoutFramework.Core.Entities.GameVersions
 		public class VersionPersonEnumPointers : IVersionPersonEnumPointers
 		{
 			public int Player { get { return 0x2C78E9C; } }
-			public int Staff { get { return 0x2C74A08; } }
+            public int SecondaryPlayer { get { return 0x0; } }
+            public int Staff { get { return 0x2C74A08; } }
 			public int PlayerStaff { get { return 0x2C7BEBC; } }
 			public int HumanManager { get { return 0x2C80270; } }
 			public int Official { get { return 0x2C8639C; } }
@@ -192,7 +193,7 @@ namespace FMScoutFramework.Core.Entities.GameVersions
 		public class PersonVersionOffsets : IPersonVersionOffsets
 		{
 			public int Person { get { return -0xC4; } }
-			public int Player { get { return -0x208; } } // OK
+            public int Player { get { return -0x208; } } // OK
 			public int Staff { get { return -0x84; } }
 			public int NonPlayer { get { return 0x0; } }
 			public int PlayerStaff { get { return -0x28C; } }

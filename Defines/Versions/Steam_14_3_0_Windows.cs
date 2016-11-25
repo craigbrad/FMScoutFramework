@@ -103,7 +103,8 @@ namespace FMScoutFramework.Core.Entities.GameVersions
 		public class VersionPersonEnumPointers : IVersionPersonEnumPointers
 		{
 			public int Player { get { return 0x347D104; } }
-			public int Staff { get { return 0x347EB6C; } }
+            public int SecondaryPlayer { get { return 0x0; } }
+            public int Staff { get { return 0x347EB6C; } }
 			public int PlayerStaff { get { return 0x3473ED4; } }
 			public int HumanManager { get { return 0x347608C; } }
 			public int Official { get { return 0x9EA1658; } } // Not Fixed

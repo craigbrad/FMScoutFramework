@@ -17,6 +17,9 @@ namespace FMScoutFramework.Core.Offsets
 		public const short ID				= 0x8;
 		public const short Teams 			= 0x10;
         public const short ClubDetailsOne   = 0x50;
+        //public const int SeasonTicketSales  = 0x966B518;
+        public const int SeasonTicketHolders = 0x966B614;
+
 
         public short Fullname
         {
